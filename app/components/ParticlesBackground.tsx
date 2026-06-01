@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 interface ParticlesBackgroundProps {
   particleCount?: number;
@@ -15,8 +15,8 @@ interface Particle {
   x: number;
   y: number;
   size: number;
-  life: number;
-  maxLife: number;
+  speed: number; // per-particle drift speed (px/frame) for organic variation
+  opacity: number; // steady per-particle alpha factor (no pulsing)
 }
 
 // Perlin noise (3D) — unchanged engine from the source component.
@@ -78,23 +78,31 @@ function createNoise() {
         lerp(
           v,
           lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
-          lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z)),
+          lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))
         ),
         lerp(
           v,
-          lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
-          lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1)),
-        ),
+          lerp(
+            u,
+            grad(p[AA + 1], x, y, z - 1),
+            grad(p[BA + 1], x - 1, y, z - 1)
+          ),
+          lerp(
+            u,
+            grad(p[AB + 1], x, y - 1, z - 1),
+            grad(p[BB + 1], x - 1, y - 1, z - 1)
+          )
+        )
       );
     },
   };
 }
 
-const FALLBACK_COLOR = "#2c66b2"; // --color-blue
+const FALLBACK_COLOR = '#2c66b2'; // --color-blue
 
 // Parse a hex color to an "r, g, b" string for rgba().
 function hexToRgb(hex: string): string {
-  const m = hex.trim().replace("#", "");
+  const m = hex.trim().replace('#', '');
   if (m.length === 3) {
     const r = parseInt(m[0] + m[0], 16);
     const g = parseInt(m[1] + m[1], 16);
@@ -107,7 +115,7 @@ function hexToRgb(hex: string): string {
     const b = parseInt(m.slice(4, 6), 16);
     return `${r}, ${g}, ${b}`;
   }
-  return "44, 102, 178"; // fallback rgb for #2c66b2
+  return '44, 102, 178'; // fallback rgb for #2c66b2
 }
 
 export default function ParticlesBackground({
@@ -115,30 +123,38 @@ export default function ParticlesBackground({
   color,
   maxOpacity = 0.1,
   noiseIntensity = 0.003,
-  particleSize = { min: 0.5, max: 2 },
+  particleSize = { min: 0.5, max: 1.2 },
   className,
 }: ParticlesBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     // Respect reduced-motion: render nothing, run no loop.
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (motionQuery.matches) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     // Resolve particle color from the brand token (or prop), once.
     let resolved = color;
     if (!resolved) {
       const token = getComputedStyle(document.documentElement)
-        .getPropertyValue("--color-blue")
+        .getPropertyValue('--color-blue')
         .trim();
       resolved = token || FALLBACK_COLOR;
     }
-    const rgb = hexToRgb(resolved.startsWith("#") ? resolved : FALLBACK_COLOR);
+    const rgb = hexToRgb(resolved.startsWith('#') ? resolved : FALLBACK_COLOR);
+
+    // Page background (cream) — trails fade toward this so streaks don't muddy.
+    const paperToken = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-paper')
+      .trim();
+    const paperRgb = hexToRgb(
+      paperToken.startsWith('#') ? paperToken : '#f7f5ee'
+    );
 
     const noise = createNoise();
     let frame = 0;
@@ -156,8 +172,8 @@ export default function ParticlesBackground({
         size:
           Math.random() * (particleSize.max - particleSize.min) +
           particleSize.min,
-        life: Math.random() * 100,
-        maxLife: 100 + Math.random() * 50,
+        speed: 0.6 + Math.random() * 1.6, // varied drift → organic, not uniform
+        opacity: 0.4 + Math.random() * 0.6, // steady per-particle alpha factor
       }));
     };
 
@@ -170,35 +186,34 @@ export default function ParticlesBackground({
     resizeCanvas();
 
     const animate = () => {
-      // Faint translucent clear keeps a soft trail without painting an opaque bg.
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Fade the previous frame toward the page bg instead of a hard clear.
+      // Low alpha leaves a soft fading streak behind each particle → current lines.
+      ctx.fillStyle = `rgba(${paperRgb}, 0.06)`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       for (const particle of particles) {
-        particle.life += 1;
-        if (particle.life > particle.maxLife) {
-          particle.life = 0;
-          particle.x = Math.random() * canvas.width;
-          particle.y = Math.random() * canvas.height;
-        }
-
-        const opacity =
-          Math.sin((particle.life / particle.maxLife) * Math.PI) * maxOpacity;
-
+        // Noise perturbs the flow angle around a dominant rightward current,
+        // rather than choosing a fully random direction. Vertical sway is damped
+        // so the overall motion reads as horizontal flow with gentle eddies.
         const n = noise.simplex3(
           particle.x * noiseIntensity,
           particle.y * noiseIntensity,
-          frame * 0.0001,
+          frame * 0.0008
         );
-        const angle = n * Math.PI * 4;
-        particle.x += Math.cos(angle) * 2;
-        particle.y += Math.sin(angle) * 2;
+        const angle = n * Math.PI; // eddy deflection
+        particle.x += (Math.cos(angle) * 0.4 + 1) * particle.speed; // bias right
+        particle.y += Math.sin(angle) * 0.5 * particle.speed; // damped sway
 
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
+        // Recycle off the right/edges → re-enter from the left at a fresh height,
+        // keeping a continuous current with no teleport pop.
+        if (particle.x > canvas.width + 8) {
+          particle.x = -8;
+          particle.y = Math.random() * canvas.height;
+        }
+        if (particle.y < -8) particle.y = canvas.height + 8;
+        if (particle.y > canvas.height + 8) particle.y = -8;
 
-        ctx.fillStyle = `rgba(${rgb}, ${opacity})`;
+        ctx.fillStyle = `rgba(${rgb}, ${maxOpacity * particle.opacity})`;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
@@ -216,12 +231,12 @@ export default function ParticlesBackground({
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(resizeCanvas, 150);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
       cancelAnimationFrame(rafId);
       clearTimeout(resizeTimer);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, [particleCount, color, maxOpacity, noiseIntensity, particleSize]);
 
@@ -231,12 +246,12 @@ export default function ParticlesBackground({
       aria-hidden="true"
       className={className}
       style={{
-        position: "fixed",
+        position: 'fixed',
         inset: 0,
-        width: "100%",
-        height: "100%",
+        width: '100%',
+        height: '100%',
         zIndex: -1,
-        pointerEvents: "none",
+        pointerEvents: 'none',
       }}
     />
   );
