@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bodoni_Moda, Hanken_Grotesk, Pinyon_Script } from "next/font/google";
 import "./globals.css";
+import ParticlesBackground from "./components/ParticlesBackground";
 
 const display = Bodoni_Moda({
   variable: "--font-display",
@@ -61,7 +62,10 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${text.variable} ${script.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <ParticlesBackground />
+        {children}
+      </body>
     </html>
   );
 }
