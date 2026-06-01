@@ -10,16 +10,16 @@ import Footer from "./components/Footer";
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "PoolCleaningService",
-  name: "Kodiak Pools and Spas, LLC",
+  name: "Acme Pool Co, LLC",
   description:
     "Expert pool service, installation & repair across Peoria and the Phoenix West Valley. Home-warranty specialist. Residential & commercial.",
-  telephone: "+1-602-399-4037",
-  email: "KodiakPoolsandSpas@gmail.com",
-  url: "https://kodiakpoolsandspas.com",
-  image: "https://kodiakpoolsandspas.com/kodiak-logo.png",
+  telephone: "+1-555-123-4567",
+  email: "info@example.com",
+  url: "https://example.com",
+  image: "https://example.com/logo-placeholder.png",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "8194 W Deer Valley Rd, Suite 106 PMB218",
+    streetAddress: "123 Example St, Suite 000",
     addressLocality: "Peoria",
     addressRegion: "AZ",
     postalCode: "85383",
@@ -39,8 +39,8 @@ const localBusinessSchema = {
     "Anthem",
     "North Phoenix",
   ].map((name) => ({ "@type": "City", name })),
-  founder: { "@type": "Person", name: "Todd Crane" },
-  identifier: { "@type": "PropertyValue", propertyID: "ROC", value: "309965" },
+  founder: { "@type": "Person", name: "Jane Doe" },
+  identifier: { "@type": "PropertyValue", propertyID: "ROC", value: "00000000" },
 };
 
 export default function Home() {

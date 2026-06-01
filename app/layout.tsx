@@ -24,13 +24,13 @@ const script = Pinyon_Script({
   display: "swap",
 });
 
-const SITE_URL = "https://kodiakpoolsandspas.com";
+const SITE_URL = "https://example.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Kodiak Pools and Spas — Expert Pool Service, Peoria AZ",
+  title: "Acme Pool Co — Expert Pool Service, Peoria AZ",
   description:
-    "Kodiak Pools and Spas, LLC — expert pool service, installation & repair across Peoria and the West Valley. Home-warranty specialist. Residential & commercial. ROC #309965.",
+    "Acme Pool Co, LLC — expert pool service, installation & repair across Peoria and the West Valley. Home-warranty specialist. Residential & commercial. ROC #00000000.",
   keywords: [
     "pool service Peoria AZ",
     "pool repair West Valley",
@@ -40,11 +40,11 @@ export const metadata: Metadata = {
     "pool heater repair",
   ],
   openGraph: {
-    title: "Kodiak Pools and Spas — Expert Pool Service, Peoria AZ",
+    title: "Acme Pool Co — Expert Pool Service, Peoria AZ",
     description:
-      "Expert pool service, installation & repair for Peoria and the Phoenix West Valley. Home-warranty specialist. ROC #309965.",
+      "Expert pool service, installation & repair for Peoria and the Phoenix West Valley. Home-warranty specialist. ROC #00000000.",
     url: SITE_URL,
-    siteName: "Kodiak Pools and Spas",
+    siteName: "Acme Pool Co",
     locale: "en_US",
     type: "website",
   },

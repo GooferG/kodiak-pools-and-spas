@@ -1,7 +1,7 @@
 const DIFFERENTIATORS = [
   "Trusted by home-warranty & insurance providers",
   "Clear, documented diagnosis on every claim",
-  "Licensed AZ contractor — ROC #309965",
+  "Licensed AZ contractor — ROC #00000000",
   "Residential & commercial properties",
 ];
 
@@ -18,17 +18,17 @@ export default function WhyKodiak() {
             </div>
           </div>
           <p className="body">
-            That definition is printed on the back of every Kodiak card for a reason. Todd Crane
+            That definition is printed on the back of every Acme card for a reason. Jane Doe
             built this company on doing the work properly — diagnosing the real problem, using the
             right parts, and standing behind the result. No upsells, no guesswork.
           </p>
         </div>
         <div className="why-card">
-          <span className="eyebrow">The Kodiak difference</span>
+          <span className="eyebrow">The Acme difference</span>
           <h3>Home-Warranty Specialist</h3>
           <p>
-            Kodiak is the contractor home-warranty and insurance companies call when a pool claim
-            needs an honest diagnosis and a clean fix. Todd handles the inspection, the paperwork
+            Acme is the contractor home-warranty and insurance companies call when a pool claim
+            needs an honest diagnosis and a clean fix. Jane handles the inspection, the paperwork
             and the repair — start to finish.
           </p>
           <ul>

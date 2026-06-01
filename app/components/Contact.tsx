@@ -40,7 +40,7 @@ export default function Contact() {
       // No key configured yet — surface a clear message instead of failing silently.
       setStatus("error");
       setErrorMsg(
-        "Form isn't connected yet. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY to .env.local, or call/text 602.399.4037."
+        "Form isn't connected yet. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY to .env.local, or call/text (555) 123-4567."
       );
       return;
     }
@@ -51,7 +51,7 @@ export default function Contact() {
     const payload = {
       access_key: ACCESS_KEY,
       subject: `New quote request — ${name}`,
-      from_name: "Kodiak Pools website",
+      from_name: "Acme Pool Co website",
       name,
       phone,
       email: data.get("email") || "",
@@ -72,11 +72,11 @@ export default function Contact() {
         setStatus("success");
       } else {
         setStatus("error");
-        setErrorMsg(json.message || "Something went wrong. Please call or text 602.399.4037.");
+        setErrorMsg(json.message || "Something went wrong. Please call or text (555) 123-4567.");
       }
     } catch {
       setStatus("error");
-      setErrorMsg("Network error. Please call or text 602.399.4037.");
+      setErrorMsg("Network error. Please call or text (555) 123-4567.");
     }
   }
 
@@ -87,16 +87,16 @@ export default function Contact() {
           <span className="eyebrow">Request a quote</span>
           <h2>Tell us about your pool.</h2>
           <p className="lead">
-            Send a few details and Todd will get back to you with next steps — usually same day.
+            Send a few details and Jane will get back to you with next steps — usually same day.
             Prefer to talk? Call or text{" "}
-            <b style={{ color: "#fff" }}>602.399.4037</b>.
+            <b style={{ color: "#fff" }}>(555) 123-4567</b>.
           </p>
 
           {status === "success" ? (
             <div className="form-success show" style={{ marginTop: 36 }}>
               <h3>Thanks — request received.</h3>
               <p>
-                Todd will be in touch shortly. For anything urgent, call or text 602.399.4037.
+                Jane will be in touch shortly. For anything urgent, call or text (555) 123-4567.
               </p>
             </div>
           ) : (
@@ -118,7 +118,7 @@ export default function Contact() {
                   id="qphone"
                   name="phone"
                   type="tel"
-                  placeholder="(602) 000-0000"
+                  placeholder="(555) 000-0000"
                   className={errors.phone ? "invalid" : undefined}
                   required
                 />
@@ -186,8 +186,8 @@ export default function Contact() {
             <div>
               <div className="lbl">Phone</div>
               <div className="val">
-                <a href="tel:6023994037">602.399.4037</a>
-                <small>Call or text — Todd Crane</small>
+                <a href="tel:5551234567">(555) 123-4567</a>
+                <small>Call or text — Jane Doe</small>
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function Contact() {
             <div>
               <div className="lbl">Email</div>
               <div className="val" style={{ fontSize: "0.96rem" }}>
-                <a href="mailto:KodiakPoolsandSpas@gmail.com">KodiakPoolsandSpas@gmail.com</a>
+                <a href="mailto:info@example.com">info@example.com</a>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function Contact() {
             <div>
               <div className="lbl">Address</div>
               <div className="val" style={{ fontSize: "0.98rem" }}>
-                8194 W Deer Valley Rd<small>Suite 106 PMB218 · Peoria, AZ 85383</small>
+                123 Example St<small>Suite 000 · Peoria, AZ 85383</small>
               </div>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function Contact() {
             <div>
               <div className="lbl">License</div>
               <div className="val">
-                ROC #309965<small>Licensed · Bonded · Insured</small>
+                ROC #00000000<small>Licensed · Bonded · Insured</small>
               </div>
             </div>
           </div>
